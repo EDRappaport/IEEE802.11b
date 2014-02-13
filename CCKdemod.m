@@ -19,8 +19,9 @@ for ii=0:63
     bin = de2bi(ii, 6, 'left-msb');
     symbols(:,ii+1) = cckmod([0 0 bin]);
 end
-symbols(symbols==-pi) = pi; %correct the -pi, pi issue for angle
 symbolAng = angle(symbols);
+symbolAng(symbolAng < -3.141) = symbolAng(symbolAng < -3.141) + 2*pi;
+symbolAng(symbolAng > pi+.1) = symbolAng(symbolAng > pi+.1) - 2*pi;
 
 prev_phi1 = 0; %initialize prev to 0
 
@@ -31,10 +32,11 @@ for ii=1:size(RxSymbMat, 1)
     
     %find and isolate phi1
     phi1 = angle(RxSymbMat(ii, 8));
-    phi1(phi1==-pi) = pi; %correct the -pi, pi issue for angle
+    phi1(phi1 < -3.141) = phi1(phi1 < -3.141) + 2*pi;
+    phi1(phi1 > pi+.1) = phi1(phi1 > pi+.1) - 2*pi;
     RxAngles = angle(RxSymbMat(ii,:)) - phi1;
     RxAngles(RxAngles < -3.141) = RxAngles(RxAngles < -3.141) + 2*pi;
-    RxAngles(RxAngles > pi) = RxAngles(RxAngles > pi) - 2*pi;
+    RxAngles(RxAngles > pi+.1) = RxAngles(RxAngles > pi+.1) - 2*pi;
 
     k(ii) = dsearchn(symbolAng.', RxAngles); %decimal # for last 6 bits +1
     
@@ -45,11 +47,11 @@ for ii=1:size(RxSymbMat, 1)
         adjusted = phi1 - prev_phi1;
     end 
     adjusted(adjusted < 3.141) = adjusted(adjusted<3.141) + 2*pi;
-    adjusted(adjusted > pi) = adjusted(adjusted > pi) - 2*pi;
+    adjusted(adjusted > pi+.1) = adjusted(adjusted > pi+.1) - 2*pi;
     
     %find the phi1 offset and choose relevant
     opt = dsearchn([0 pi/2 pi -pi/2].', adjusted);
-    bits12 = BITS12(opt,:)
+    bits12 = BITS12(opt,:);
     add = bi2de([bits12 zeros(1,6)], 'left-msb'); % decimal # for first 2 bits
     
     k(ii) = k(ii)+add-1; %decimal # for 8 bits
@@ -58,4 +60,5 @@ for ii=1:size(RxSymbMat, 1)
     
 end
 
-RxBits = reshape(de2bi(k, 8, 'left-msb').', 1, []);
+RxBits = reshape(de2bi(k, 8, 'left-msb').', 1, []).';
+%RxBits = k;
