@@ -58,4 +58,4 @@ for ii=1:size(RxSymbMat, 1)
     
 end
 
-RxBits = de2bi(k, 8, 'left-msb');
+RxBits = reshape(de2bi(k, 8, 'left-msb').', 1, []);
