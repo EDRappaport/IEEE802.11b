@@ -1,9 +1,17 @@
 function [ symbols ] = cckmod( data,bitspersymbol )
-%function [ symbols ] = cckmod( data,bitspersymbol )
-%This function takes in a bitstream (data) and a bitspersymbol and
-%complementary code keying modulates  the data. symbols will be a matrix of
-%symbols where each row  is a length 8 complex vector corresponding to a 
-%single symbol
+% function [ symbols ] = cckmod( data,bitspersymbol )
+%
+% This function takes in a bitstream (data) and a bitspersymbol and
+% complementary code keying modulates  the data. symbols will be a matrix
+% of symbols where each row  is a length 8 complex vector corresponding to 
+% a single symbol
+%
+% ECE408: Wireless Communications
+% Implementation of PHY layer of IEEE802.11b
+%
+% Rappaport, Elliot D
+% Weintraub, Elie
+% Weintraub, Hillel
 
 %default bitspersymbol=8
 if nargin<2, bitspersymbol=8; end
