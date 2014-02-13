@@ -3,7 +3,7 @@ function RxBits = CCKdemod( RxSymbMat )
 %
 % This function takes the output in the form of cckmod's output - a matrix
 % where each row is one symbol, 8 chips long, representing 8 (11Mbps)
-% or 4 (5.5Mbps) bits.  The function will demodulate the input and output a
+% or 4 (5.5Mbps).  The function will demodulate the input and output a
 % vector of the predicted bits.
 %
 % ECE408: Wireless Communications
@@ -33,8 +33,8 @@ for ii=1:size(RxSymbMat, 1)
     phi1 = angle(RxSymbMat(ii, 8));
     phi1(phi1==-pi) = pi; %correct the -pi, pi issue for angle
     RxAngles = angle(RxSymbMat(ii,:)) - phi1;
-    RxAngles(RxAngles > pi) = RxAngles(RxAngles > pi) - 2*pi;
     RxAngles(RxAngles < -3.141) = RxAngles(RxAngles < -3.141) + 2*pi;
+    RxAngles(RxAngles > pi) = RxAngles(RxAngles > pi) - 2*pi;
 
     k(ii) = dsearchn(symbolAng.', RxAngles); %decimal # for last 6 bits +1
     
@@ -44,8 +44,8 @@ for ii=1:size(RxSymbMat, 1)
     else
         adjusted = phi1 - prev_phi1;
     end 
-    adjusted(adjusted > pi) = adjusted(adjusted > pi) - 2*pi;
     adjusted(adjusted < 3.141) = adjusted(adjusted<3.141) + 2*pi;
+    adjusted(adjusted > pi) = adjusted(adjusted > pi) - 2*pi;
     
     %find the phi1 offset and choose relevant
     opt = dsearchn([0 pi/2 pi -pi/2].', adjusted);
