@@ -10,10 +10,10 @@ if nargin<2, bitspersymbol=8; end
 
 %add zeros to make length(data) a multiple of bitspersymbol and reshape
 %data into rows of 
-if mod(data,bitspersymbol)~=0
+if mod(length(data),bitspersymbol)~=0
     data=[data(:); zeros(bitspersymbol-mod(length(data),bitspersymbol),1)];
 end
-data=reshape(data,[],bitspersymbol);
+data=reshape(data,bitspersymbol,[])';
 
 %formula for the cck symbol
 c = @(phi1,phi2,phi3,phi4) [exp(1j*(phi1+phi2+phi3+phi4)) exp(1j*(phi1+phi3+phi4))... 
