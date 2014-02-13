@@ -77,7 +77,7 @@ function [phi]= getdqpskphase(data)
 %data is a matrix with rows of bit pairs (d0 d1)
 
 pioffsets=0:pi:(size(data,1)-1)*pi;
-phi=cumsum(getqpskphase(data))+pioffsets';
+phi=cumsum(getqpskphase(data)+pioffsets');
 
 end
 
@@ -86,7 +86,6 @@ end
             
         
     
-
 
 
 
