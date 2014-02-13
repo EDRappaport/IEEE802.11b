@@ -2,8 +2,8 @@ function RxBits = CCKdemod( RxSymbMat )
 % function RxBits = CCKdemod( RxSymbMat )
 %
 % This function takes the output in the form of cckmod's output - a matrix
-% where each row is one symbol, 8 chips long, representing 8 bits (11Mbps)
-% or 4 bits (5.5Mbps).  The function will demodulate the input and output a
+% where each row is one symbol, 8 chips long, representing 8 (11Mbps)
+% or 4 (5.5Mbps) bits.  The function will demodulate the input and output a
 % vector of the predicted bits.
 %
 % ECE408: Wireless Communications
