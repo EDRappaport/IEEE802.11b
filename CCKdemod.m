@@ -1,4 +1,4 @@
-function RxBits = CCKdemod( RxSymbMat )
+function RxBits = CCKdemod( RxSymbMat,bitspersymbol )
 % function RxBits = CCKdemod( RxSymbMat )
 %
 % This function takes the output in the form of cckmod's output - a matrix
@@ -13,11 +13,21 @@ function RxBits = CCKdemod( RxSymbMat )
 % Weintraub, Elie
 % Weintraub, Hillel
 
+%default bitspersymbol=8
+if nargin<2, bitspersymbol=8; end
+
 % Find possibilities for the last 6 bits for later comparison
 % first two bits work differntially, will addr separately
-for ii=0:63
-    bin = de2bi(ii, 6, 'left-msb');
-    symbols(:,ii+1) = cckmod([0 0 bin]);
+if (bitspersymbol == 8)
+    for ii=0:63
+        bin = de2bi(ii, bitspersymbol-2, 'left-msb');
+        symbols(:,ii+1) = cckmod([0 0 bin]);
+    end
+else
+    for ii=0:3
+        bin = de2bi(ii, bitspersymbol-2, 'left-msb');
+        symbols(:,ii+1) = cckmod([0 0 bin], 4);
+    end
 end
 new_symbols = [real(symbols); imag(symbols)];
 
@@ -44,7 +54,7 @@ for ii=1:size(RxSymbMat, 1)
     %find the phi1 offset and choose relevant
     opt = dsearchn([real([1 j -1  -j]); imag([1 j -1  -j])].', [real(adjusted) imag(adjusted)]);
     bits12 = BITS12(opt,:);
-    add = bi2de([bits12 zeros(1,6)], 'left-msb'); % decimal # for first 2 bits
+    add = bi2de([bits12 zeros(1,bitspersymbol-2)], 'left-msb'); % decimal # for first 2 bits
     
     k(ii) = k(ii)+add-1; %decimal # for 8 bits
     
@@ -52,5 +62,5 @@ for ii=1:size(RxSymbMat, 1)
     
 end
 
-RxBits = reshape(de2bi(k, 8, 'left-msb').', 1, []).';
+RxBits = reshape(de2bi(k, bitspersymbol, 'left-msb').', 1, []).';
 %RxBits = k;
