@@ -25,8 +25,8 @@ SamplesPerChip = 8;
 SNR = EbNo +10*log10(BitsPerSymbol)-10*log10(SpreadingRate*SamplesPerChip);
 
 %Define DBPSK Modulator and Demodulator Objects
-DQPSK_Mod = comm.DQPSKModulator('BitInput',true,'SymbolMapping','Binary');    
-DQPSK_Demod = comm.DQPSKDemodulator('BitOutput',true,'SymbolMapping','Binary');   
+DQPSK_Mod = comm.DQPSKModulator(0,'BitInput',true,'SymbolMapping','Binary');    
+DQPSK_Demod = comm.DQPSKDemodulator(0,'BitOutput',true,'SymbolMapping','Binary');   
 
 %Define Root-Raised Cosine Filter Properties and Tx and Rx Filter Objects
 FilterSpanInSymbols = 5;
@@ -67,7 +67,7 @@ for i=1:length(SNR)
         TxSymbols = step(DQPSK_Mod,TxBits);
         
         %Spread symbols with Barker code (upsampling by spreading rate)
-        TxChips = reshape(Barker*TxSymbols',[],1);
+        TxChips = reshape(Barker*TxSymbols.',[],1);
         
         %Pulse-shape transmitted symbols (upsampling by samples per chip)
         TxSamplesFiltered = step(TxFilter,TxChips);

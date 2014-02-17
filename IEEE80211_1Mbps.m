@@ -3,7 +3,7 @@
 % Standard Simulation: IEEE 802.11b through an AWGN Channel
 % 2/12/14
 
-%clc,clear all,close all
+clc,clear all,close all
 
 %% Define Simulation Parameters
 EbNo = 0:10;                  % range of noise levels 
@@ -67,7 +67,7 @@ for i=1:length(SNR)
         TxSymbols = step(DBPSK_Mod,TxBits);
         
         %Spread symbols with Barker code (upsampling by spreading rate)
-        TxChips = reshape(Barker*TxSymbols',[],1);
+        TxChips = reshape(Barker*TxSymbols.',[],1);
         
         %Pulse-shape transmitted symbols (upsampling by samples per chip)
         TxSamplesFiltered = step(TxFilter,TxChips);
