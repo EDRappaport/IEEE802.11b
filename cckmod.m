@@ -39,6 +39,7 @@ end
 phi1=getdqpskphase(data(:,1:2));
     
 symbols=c(phi1,phi2,phi3,phi4);
+symbols = symbols.'; symbols = symbols(:);
     
 end
 

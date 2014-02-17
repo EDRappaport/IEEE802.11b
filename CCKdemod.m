@@ -1,4 +1,4 @@
-function RxBits = CCKdemod( RxSymbMat,bitspersymbol )
+function RxBits = CCKdemod( RxSymbStream,bitspersymbol )
 % function RxBits = CCKdemod( RxSymbMat )
 %
 % This function takes the output in the form of cckmod's output - a matrix
@@ -16,6 +16,7 @@ function RxBits = CCKdemod( RxSymbMat,bitspersymbol )
 %default bitspersymbol=8
 if nargin<2, bitspersymbol=8; end
 
+RxSymbMat = reshape(RxSymbStream, 8, []).';
 % Find possibilities for the last 6 bits for later comparison
 % first two bits work differntially, will addr separately
 if (bitspersymbol == 8)
