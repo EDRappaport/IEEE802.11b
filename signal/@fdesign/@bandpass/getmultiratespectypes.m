@@ -1,0 +1,13 @@
+function multiratespectypes = getmultiratespectypes(~)
+%GETMULTIRATESPECTYPES Get the multiratespectypes.
+
+%   Copyright 2005-2011 The MathWorks, Inc.
+%   $Revision: 1.1.6.3 $  $Date: 2011/04/02 00:55:22 $
+
+multiratespectypes = {'Fst1,Fp1,Fp2,Fst2,Ast1,Ap,Ast2', ...
+    'N,Fc1,Fc2', ...
+    'N,Fc1,Fc2,Ast1,Ap,Ast2',...
+    'N,Fst1,Fp1,Fp2,Fst2',...
+    'N,Fst1,Fp1,Fp2,Fst2,C'};
+
+% [EOF]
