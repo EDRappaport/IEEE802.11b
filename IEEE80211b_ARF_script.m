@@ -1,32 +1,44 @@
-clear all;
+clc,clear all,close all;
 
 %% Simulation Parameters
-EbNo = 0:10               % range of noise levels 
-NumPackets = 1e3;         % number of packets sent
+EbNo = 0:2:10;            % range of noise levels 
+NumPackets = 50;          % number of packets sent
 PacketSizeBits = 8192;    % 802.11 packet size
-THRESHOLD = 0             % errorbits above which packet is considered bad 
+SamplesPerChip = 8;       
+ERR_THRESH = 10;         % errorbits above which packet is considered bad
+SUCCESS_THRESH = 5;      % num of good Txs after which we increase rate
 modulateFunctions = {@(x) barkermod(x, 1), @(x) barkermod(x, 2),...
     @(x) cckmod(x, 4), @(x) cckmod(x, 8)};
 demodulateFunctions = {@(x) barkerdemod(x, 1), @(x) barkerdemod(x, 2),...
     @(x) CCKdemod(x, 4), @(x) CCKdemod(x, 8)};
+BitsPerSymbols = [1, 2, 4, 8];
+SpreadingRates = [11, 11, 8, 8];
+calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
+                            -10*log10(SpreadingRates(rate)*SamplesPerChip);
+
 
 %% Main BER Loop
-BER = zeros(length(EbNo),1)
+RateMat=zeros(NumPackets,length(EbNo));
+BER = zeros(length(EbNo),1);
 for i=1:length(EbNo)
     
     %Initialize Stats
-    numSuccess = 0; numFail = 0; probe = false; rate = 1;
+    rate = 1;
+    numSuccess = 0; numFail = 0; probe = false; 
     TotalBits = 0; ErrorBits = 0;
     for packet = 1:NumPackets
         
-        snr = calcSnr{rate}(EbNo(i));
+        RateMat(packet,i)=rate;
+        
+        snr = calcSnr(rate,EbNo(i));
         
         TxBits = randi([0 1],PacketSizeBits,1);
         TxChips = modulateFunctions{rate}(TxBits);
-        [Samples,h,SamplesPerChip,FilterDelayInChips] = TxFilter(TxChips);
+        [Samples,h,FilterDelayInChips] = TxFilter(TxChips,SamplesPerChip);
         ChannelOutput = awgn(Samples, snr, 'measured'); 
-        [Rxchips,TotalDelayInBits] = RxFilter(ChannelOutput,h,...
-            SamplesPerChip,FilterDelayInChips,BitsPerSymbol,SpreadingRate);
+        [RxChips,TotalDelayInBits] = RxFilter(ChannelOutput,h,...
+                                  SamplesPerChip,FilterDelayInChips,...
+                                BitsPerSymbols(rate),SpreadingRates(rate));
         RxBits = demodulateFunctions{rate}(RxChips);
         
         %claculate error and adjust numSuccess and numFail
@@ -34,14 +46,14 @@ for i=1:length(EbNo)
         NewErrorBits = sum(TxBits(1:end-TotalDelayInBits)~=...
                         RxBits(TotalDelayInBits+1:end));
         ErrorBits = ErrorBits + NewErrorBits;
-        if NewErrorBits > THRESHOLD          % failure
+        if NewErrorBits > ERR_THRESH   % failure
             numFail = numFail+1;
             if (numFail == 2 || (numFail == 1 && probe)) && rate > 1
                 rate = rate-1; numSuccess = 0; numFail = 0;  probe = false;
             end
-        else                        % success
+        else                          % success
             numSuccess = numSuccess+1;
-            if numSuccess == 10 && rate < 4
+            if numSuccess == SUCESS_THRESH && rate < 4
                 rate = rate+1; numSuccess = 0; numFail = 0; probe = true;
             else
                 probe = false; numFail = 0;
