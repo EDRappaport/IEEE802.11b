@@ -24,7 +24,7 @@ SamplesPerChip = 8;
 %Simulation SNR Values
 SNR = EbNo +10*log10(BitsPerSymbol)-10*log10(SpreadingRate*SamplesPerChip);
 
-%Define DBPSK Modulator and Demodulator Objects
+%Define DQPSK Modulator and Demodulator Objects
 DQPSK_Mod = comm.DQPSKModulator(0,'BitInput',true,'SymbolMapping','Binary');    
 DQPSK_Demod = comm.DQPSKDemodulator(0,'BitOutput',true,'SymbolMapping','Binary');   
 
@@ -118,7 +118,3 @@ figure('Name','BER vs. EbNo');
 semilogy(EbNo,BER,'*-');grid on; 
 title('BER for IEEE 802.11b 2Mbps through an AWGN Channel');
 xlabel('Eb/No (dB)'); ylabel('Bit Error Rate');
-
-
-
-

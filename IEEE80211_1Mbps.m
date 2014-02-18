@@ -3,7 +3,7 @@
 % Standard Simulation: IEEE 802.11b through an AWGN Channel
 % 2/12/14
 
-clc,clear all,close all
+%clc,clear all,close all
 
 %% Define Simulation Parameters
 EbNo = 0:10;                  % range of noise levels 
