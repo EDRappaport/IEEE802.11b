@@ -53,7 +53,7 @@ for i=1:length(EbNo)
             end
         else                          % success
             numSuccess = numSuccess+1;
-            if numSuccess == SUCESS_THRESH && rate < 4
+            if numSuccess == SUCCESS_THRESH && rate < 4
                 rate = rate+1; numSuccess = 0; numFail = 0; probe = true;
             else
                 probe = false; numFail = 0;
