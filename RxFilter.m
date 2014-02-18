@@ -1,7 +1,7 @@
 function [chips,TotalDelayInBits] = RxFilter(samples,h,SamplesPerChip,...
-                            BitsPerSymbol,SpreadingRate,FilterDelayInChips)
-% function [chips,TotalDelayInBits] = RxFilter(samples,h,SamplesPerChip,...
-%                           BitsPerSymbol,SpreadingRate,FilterDelayInChips)
+                            FilterDelayInChips,BitsPerSymbol,SpreadingRate)
+%function [chips,TotalDelayInBits] = RxFilter(samples,h,SamplesPerChip,...
+%                           FilterDelayInChips,BitsPerSymbol,SpreadingRate)
 %
 % This function takes in a sample stream (samples) and the impulse response
 % of the corresponding TxFilter and outputs the result of  a raised
