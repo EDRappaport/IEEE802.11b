@@ -32,4 +32,4 @@ TotalDelayInSymbols = TotalDelayInChips/SpreadingRate;
 TotalDelayInBits = TotalDelayInSymbols*BitsPerSymbol; 
 
 %Align chips with symbol boundary
-chips=[zeros(AlignmentChipDelay,1);chips];
+chips=[zeros(AlignmentChipDelay,1);chips(1:end-AlignmentChipDelay)];

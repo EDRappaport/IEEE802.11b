@@ -36,4 +36,4 @@ chips = reshape(chips,SpreadingRate,[]);
 symbols = reshape(Barker*chips,[],1)/SpreadingRate;
 
 %Demodulate Data
-data = step(DPSK_Demod,symbols)
+data = step(DPSK_Demod,symbols);
