@@ -28,7 +28,6 @@ SpreadingRates = [11, 11, 8, 8];
 calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
                             -10*log10(SpreadingRates(rate)*SamplesPerChip);
 
-
 %% Main BER Loop
 RateMat=zeros(NumPackets,length(EbNo));
 BER = zeros(length(EbNo),1);

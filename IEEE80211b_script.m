@@ -23,6 +23,14 @@ NumPackets = 50;                 % number of packets sent
 PacketSizeBits = 8192;           % 802.11 packet size
 SamplesPerChip = 8;       
 
+%% ARF Parameters
+if ARF
+    ERR_THRESH = PacketSizeBits/100; % errors above which packet is bad
+    SUCCESS_THRESH = 5;              % num of good Txs after which we inc. rate
+    RateMat=zeros(NumPackets,length(EbNo));
+end
+
+%% Setup
 modulateFunctions = {@(x) barkermod(x, 1), @(x) barkermod(x, 2),...
     @(x) cckmod(x, 4), @(x) cckmod(x, 8)};
 demodulateFunctions = {@(x) barkerdemod(x, 1), @(x) barkerdemod(x, 2),...
@@ -32,13 +40,6 @@ SpreadingRates = [11, 11, 8, 8];
 calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
                             -10*log10(SpreadingRates(rate)*SamplesPerChip);
                         
-%% ARF Parameters
-if ARF
-    ERR_THRESH = PacketSizeBits/100; % errors above which packet is bad
-    SUCCESS_THRESH = 5;              % num of good Txs after which we inc. rate
-    RateMat=zeros(NumPackets,length(EbNo));
-end
-
 %% Main BER Loop
 BER = zeros(length(EbNo),1);
 for i=1:length(EbNo)
