@@ -9,16 +9,17 @@
 
 clc, clear all, close all;
 
-%% ARF Parameters
-ERR_THRESH = PacketSizeBits/100; % errors above which packet is bad
-SUCCESS_THRESH = 5;              % num of good Txs after which we inc. rate
-
 %% Simulation Parameters
 EbNo = 0:2:10;                   % range of noise levels 
 NumPackets = 50;                 % number of packets sent
 PacketSizeBits = 8192;           % 802.11 packet size
 SamplesPerChip = 8;       
 
+%% ARF Parameters
+ERR_THRESH = PacketSizeBits/100; % errors above which packet is bad
+SUCCESS_THRESH = 5;              % num of good Txs after which we inc. rate
+
+%% Setup
 modulateFunctions = {@(x) barkermod(x, 1), @(x) barkermod(x, 2),...
     @(x) cckmod(x, 4), @(x) cckmod(x, 8)};
 demodulateFunctions = {@(x) barkerdemod(x, 1), @(x) barkerdemod(x, 2),...
