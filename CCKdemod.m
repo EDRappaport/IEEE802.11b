@@ -13,13 +13,11 @@ function RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
 % Weintraub, Elie
 % Weintraub, Hillel
 
-%default bitspersymbol=8
-if nargin<2, bitspersymbol=8; end
 
-if mod(TotalDelayInBits, bitspersymbol*2)
-    norm = 1;
-elseif mod(TotalDelayInBits, bitspersymbol)
-    norm = 0;
+if mod(TotalDelayInBits, bitspersymbol*2) == 0
+    norm = 1
+elseif mod(TotalDelayInBits, bitspersymbol) == 0
+    norm = 0
 else
     disp('confused');
 end
@@ -55,9 +53,9 @@ for ii=1:size(RxSymbMat, 1)
     
     % find the differntial phi1, if odd symbol then extra pi shift
     if (mod(ii-1,2))
-        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*(norm*exp(-pi*j));
+        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*j*norm);
     else
-        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*(~norm*exp(-pi*j));
+        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*j*(~norm));
     end
     
     %find the phi1 offset and choose relevant

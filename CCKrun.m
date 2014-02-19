@@ -22,7 +22,7 @@ for ind=1:length(SNR)
     Tx_symbols = cckmod(Tx_bits, bitspersymbol);
     
     Rx_symbols = awgn(Tx_symbols, snr, 'measured');
-    Rx_bits = CCKdemod(Rx_symbols, bitspersymbol);    
+    Rx_bits = CCKdemod(Rx_symbols, bitspersymbol, 16);    
     
     BER(ind) = sum(Rx_bits~=Tx_bits)/length(Tx_bits);
 end
