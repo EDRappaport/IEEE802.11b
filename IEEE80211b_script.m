@@ -11,10 +11,15 @@
 clc,clear all,close all;
 
 %% Mode Selection 
-ARF = input('Do you want to use ARF: (true, false)');
+ARF = input('Do you want to use ARF (true, false): ');
 if ~ARF
-    RATE = input(['What fixed data rate do you want to use:'...
-                  '(1:1Mbps,2:2 Mbps,3:5.5Mbps,4: 11Mbps)']);
+    RATE = input('What data rate do you want to use (1, 2, 5.5, 11): ');
+    switch RATE
+        case 1,   RATE = 1;
+        case 2,   RATE = 2;
+        case 5.5, RATE = 3;
+        case 11,  RATE = 4;
+    end
 end
 
 %% Simulation Parameters
