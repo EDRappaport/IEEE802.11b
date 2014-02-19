@@ -40,7 +40,8 @@ numSuccess = 0; numFail = 0; probe = false;
 
 for packet = 1:NumPackets
 
-    disp(['Simulating Packet ' num2str(packet) '...']);
+    disp(['Simulating EbNo = ' num2str(EbNo(i)),...
+          ' Packet ' num2str(packet) '...']);
 
     snr = calcSnr(rate,EbNo(packet));   %EbNo always changing
 
@@ -92,7 +93,6 @@ set(gca,'yTickLabel',{'','1Mbps','2Mbps','5.5Mbps','11Mbps',''});
 subplot(212); plot(1:NumPackets, EbNo);
 xlabel('Packet Number');ylabel('EbNo');
 
-% saveas(h, 'Transitions.fig');
-% saveas(h, 'Transitions.png');
+saveas()
 
 toc
