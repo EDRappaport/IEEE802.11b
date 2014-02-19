@@ -15,9 +15,9 @@ function RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
 
 
 if mod(TotalDelayInBits, bitspersymbol*2) == 0
-    norm = 1
+    norm = 1;
 elseif mod(TotalDelayInBits, bitspersymbol) == 0
-    norm = 0
+    norm = 0;
 else
     disp('confused');
 end
