@@ -10,14 +10,20 @@ clear all,close all;
 
 tic
 %% Simulation Parameters
-NumPackets = 200;                 % number of packets sent
-EbNo = 10*(1+sin([1:NumPackets]/10));% range of noise levels 
+% make some fun EbNo's to simulate chnaging environment and see how ARF
+% adjusts
+EbNo1 = 15*(1+sin([1:100]/10)) + 3*randn(1, 100);% range of noise levels 
+EbNo2 = 15*(1+sin([1:50]/2)) + 2*randn(1, 50);
+EbNo3 = 20*randn(1, 50);
+EbNo4 = abs(15*(1+sin([1:50]/10)).*(1+sin([1:50]/3)));
+EbNo = [EbNo1 EbNo2 EbNo3 EbNo4];
+NumPackets = length(EbNo);                 % number of packets sent
 PacketSizeBits = 8192;           % 802.11 packet size
 SamplesPerChip = 8;       
 
 %% ARF Parameters
-ERR_THRESH = PacketSizeBits/100; % num errors above which packet is bad
-SUCCESS_THRESH = 5;              % num of good pkts needed to transition
+ERR_THRESH = PacketSizeBits/500; % num errors above which packet is bad
+SUCCESS_THRESH = 10;              % num of good pkts needed to transition
 RateMat=zeros(NumPackets,1);
 
 %% Setup
@@ -31,8 +37,7 @@ DataRates = [1, 2, 5.5, 11];
 calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
                             -10*log10(SpreadingRates(rate)*SamplesPerChip);
                         
-%% Main BER Loop
-BER = zeros(length(EbNo),1);
+%% Main Loop
 
 %Initialize Stats
 rate = 1;  TotalBits = 0; ErrorBits = 0;
@@ -40,7 +45,7 @@ numSuccess = 0; numFail = 0; probe = false;
 
 for packet = 1:NumPackets
 
-    disp(['Simulating Packet ' num2str(packet) '...']);
+    %disp(['Simulating Packet ' num2str(packet) '...']);
 
     snr = calcSnr(rate,EbNo(packet));   %EbNo always changing
 
@@ -87,7 +92,7 @@ h = figure('Name','ARF Transitions'); hold on;
 subplot(211); plot(1:NumPackets,RateMat);
 xlabel('Packet Number');ylabel('Data Rate');
 xlim([1 NumPackets]);ylim([0 5]);title('ARF Transitions');   
-set(gca,'yTickLabel',{'','1Mbps','2Mbps','5.5Mbps','11Mbps',''});
+set(gca,'yTickLabel',{'', '1Mbps','2Mbps','5.5Mbps','11Mbps', ''});
 
 subplot(212); plot(1:NumPackets, EbNo);
 xlabel('Packet Number');ylabel('EbNo');
