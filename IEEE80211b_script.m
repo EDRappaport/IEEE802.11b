@@ -125,9 +125,11 @@ if ARF
     figure('Name','ARF Transitions');
     for i=1:length(EbNo)
         subplot(3,2,i);plot(1:NumPackets,RateMat(:,i));
-        legend(['EbNo = ' num2str(EbNo(i))]);title('ARF Transitions');
+        legend(['EbNo = ' num2str(EbNo(i))]);
         xlabel('Packet Number');ylabel('Data Rate');
-        set(gca,'yTickLabel',{'1Mbps','2Mbps','5.5Mbps','11Mbps'});
+        xlim([1 NumPackets]);ylim([0 5]);title('ARF Transitions');   
+        set(gca,'yTickLabel',{'','1Mbps','2Mbps','5.5Mbps','11Mbps',''});
     end
 end
+
 toc
