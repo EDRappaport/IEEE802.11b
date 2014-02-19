@@ -30,10 +30,10 @@ c = @(phi1,phi2,phi3,phi4) [exp(1j*(phi1+phi2+phi3+phi4)) exp(1j*(phi1+phi3+phi4
                             -exp(1j*(phi1+phi2)) exp(1j*(phi1))];
                         
 if bitspersymbol==4 %5.5Mbps datarate
-    [phi2 phi3 phi4]=getcckphases5_5(data(:,3:4));
+    [phi2, phi3, phi4]=getcckphases5_5(data(:,3:4));
    
 else               %11Mbps datarate
-    [phi2 phi3 phi4]=getcckphases11(data(:,3:end));
+    [phi2, phi3, phi4]=getcckphases11(data(:,3:end));
 end
     
 phi1=getdqpskphase(data(:,1:2));
@@ -44,7 +44,7 @@ symbols = symbols.'; symbols = symbols(:);
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function [phi2 phi3 phi4]=getcckphases5_5(data)
+function [phi2, phi3, phi4]=getcckphases5_5(data)
 %get the phases for 5.5Mbps cck symbols
 %data is a matrix with rows of bit pairs (d2 d3)
 
@@ -54,7 +54,7 @@ phi4=data(:,2)*pi;
 
 end
 
-function [phi2 phi3 phi4]=getcckphases11(data)
+function [phi2, phi3, phi4]=getcckphases11(data)
 %get the phases for 11Mbps cck symbols
 %data is a matrix with rows of bit pairs (d2d3 d4d5 d6d7)
 
@@ -89,12 +89,3 @@ pioffsets=0:pi:(size(data,1)-1)*pi;
 phi=cumsum(getqpskphase(data)+pioffsets');
 
 end
-
-
-
-            
-        
-    
-
-
-

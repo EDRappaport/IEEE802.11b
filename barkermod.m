@@ -21,7 +21,6 @@ if nargin<2, bitspersymbol=1; end
 
 %Spreading Sequence
 Barker = [1 -1  1  1 -1  1  1  1 -1 -1 -1]';  % Barker Spreading Sequence
-SpreadingRate = 11;                           % Chips per symbol
 
 %Define Modulator Object 
 switch bitspersymbol

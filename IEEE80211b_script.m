@@ -21,17 +21,19 @@ if ~ARF
         case 11,  RATE = 4;
     end
 end
+DISPLAY = input('Do you want status info displayed (true, false): ');
 
+tic
 %% Simulation Parameters
-EbNo = 15:2:25;                   % range of noise levels 
+EbNo = 0:2:10;                   % range of noise levels 
 NumPackets = 50;                 % number of packets sent
 PacketSizeBits = 8192;           % 802.11 packet size
 SamplesPerChip = 8;       
 
 %% ARF Parameters
 if ARF
-    ERR_THRESH = PacketSizeBits/100; % errors above which packet is bad
-    SUCCESS_THRESH = 5;              % num of good Txs after which we inc. rate
+    ERR_THRESH = PacketSizeBits/100; % num errors above which packet is bad
+    SUCCESS_THRESH = 5;              % num of good pkts needed to transition
     RateMat=zeros(NumPackets,length(EbNo));
 end
 
@@ -42,6 +44,7 @@ demodulateFunctions = {@(x,y) barkerdemod(x, 1), @(x,y) barkerdemod(x, 2),...
     @(x,y) CCKdemod(x, 4, y), @(x,y) CCKdemod(x, 8, y)};
 BitsPerSymbols = [1, 2, 4, 8];
 SpreadingRates = [11, 11, 8, 8];
+DataRates = [1, 2, 5.5, 11];
 calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
                             -10*log10(SpreadingRates(rate)*SamplesPerChip);
                         
@@ -56,7 +59,13 @@ for i=1:length(EbNo)
     else
         rate = RATE;  TotalBits = 0; ErrorBits = 0;
     end
+    
     for packet = 1:NumPackets
+       
+        if DISPLAY
+            disp(['Simulating EbNo = ' num2str(EbNo(i)),...
+                  ' Packet ' num2str(packet) '...']);
+        end
         
         snr = calcSnr(rate,EbNo(i));
         
@@ -82,7 +91,7 @@ for i=1:length(EbNo)
             if NewErrorBits > ERR_THRESH   % failure
                 numFail = numFail+1;
                 if (numFail == 2 || (numFail == 1 && probe)) && rate > 1
-                    rate = rate-1; numSuccess = 0; numFail = 0;  probe = false;
+                    rate = rate-1; numSuccess = 0; numFail = 0;probe = false;
                 end
             else                          % success
                 numSuccess = numSuccess+1;
@@ -100,8 +109,25 @@ for i=1:length(EbNo)
 end
 
 %% Plot BER Results
+if ARF
+    title_str = 'BER for IEEE 802.11b w/ ARF through an AWGN Channel';
+else
+    title_str = ['BER for IEEE 802.11b ' num2str(DataRates(rate))...
+                 'Mbps through an AWGN Channel']; 
+end
+
 figure('Name','BER vs. EbNo');
 semilogy(EbNo,BER,'*-');grid on; 
-title('BER for IEEE 802.11b w/ ARF through an AWGN Channel');
-xlabel('Eb/No (dB)'); ylabel('Bit Error Rate');
-  
+title(title_str); xlabel('Eb/No (dB)'); ylabel('Bit Error Rate');
+
+%% Plot ARF transitions
+if ARF
+    figure('Name','ARF Transitions');
+    for i=1:length(EbNo)
+        subplot(3,2,i);plot(1:NumPackets,RateMat(:,i));
+        legend(['EbNo = ' num2str(EbNo(i))]);title('ARF Transitions');
+        xlabel('Packet Number');ylabel('Data Rate');
+        set(gca,'yTickLabel',{'1Mbps','2Mbps','5.5Mbps','11Mbps'});
+    end
+end
+toc

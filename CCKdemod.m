@@ -25,6 +25,7 @@ end
 RxSymbMat = reshape(RxSymbStream, 8, []).';
 % Find possibilities for the last 6 bits for later comparison
 % first two bits work differntially, will addr separately
+symbols = zeros(8,2^(bitspersymbol-2));
 if (bitspersymbol == 8)
     for ii=0:63
         bin = de2bi(ii, bitspersymbol-2, 'left-msb');
@@ -43,6 +44,7 @@ prev_phi1 = exp(0); %initialize prev to 0
 BITS12 = [0 0; 0 1; 1 0; 1 1]; %possibilities for first 2 bits
 
 % go through input matrix, need for loop b/c phi1 is differential
+k=zeros(size(RxSymbMat,1),1);
 for ii=1:size(RxSymbMat, 1)
     
     %isolate phi1
@@ -53,13 +55,13 @@ for ii=1:size(RxSymbMat, 1)
     
     % find the differntial phi1, if odd symbol then extra pi shift
     if (mod(ii-1,2))
-        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*j*norm);
+        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*1j*norm);
     else
-        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*j*(~norm));
+        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*1j*(~norm));
     end
     
     %find the phi1 offset and choose relevant
-    opt = dsearchn([real([1 j -1  -j]); imag([1 j -1  -j])].', [real(adjusted) imag(adjusted)]);
+    opt = dsearchn([real([1 1j -1  -1j]); imag([1 1j -1  -1j])].', [real(adjusted) imag(adjusted)]);
     bits12 = BITS12(opt,:);
     add = bi2de([bits12 zeros(1,bitspersymbol-2)], 'left-msb'); % decimal # for first 2 bits
     
