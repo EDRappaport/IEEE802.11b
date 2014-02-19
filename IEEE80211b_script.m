@@ -24,7 +24,7 @@ end
 
 %% Simulation Parameters
 EbNo = 0:2:10;                   % range of noise levels 
-NumPackets = 50;                 % number of packets sent
+NumPackets = 5;                 % number of packets sent
 PacketSizeBits = 8192;           % 802.11 packet size
 SamplesPerChip = 8;       
 

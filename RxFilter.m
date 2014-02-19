@@ -26,7 +26,12 @@ samples = filter(h,1,samples);
 chips = samples(1:SamplesPerChip:end);
 
 %Calculate alignment delay and total delay in bits (the transient)
-AlignmentChipDelay = SpreadingRate - mod(FilterDelayInChips,SpreadingRate);
+if mod(FilterDelayInChips,SpreadingRate) % filter delay is not aligned
+    AlignmentChipDelay = SpreadingRate...
+                         - mod(FilterDelayInChips,SpreadingRate);
+else
+    AlignmentChipDelay = 0;
+end
 TotalDelayInChips = FilterDelayInChips + AlignmentChipDelay;
 TotalDelayInSymbols = TotalDelayInChips/SpreadingRate;
 TotalDelayInBits = TotalDelayInSymbols*BitsPerSymbol; 
