@@ -23,7 +23,7 @@ if ~ARF
 end
 
 %% Simulation Parameters
-EbNo = 0:2:10;                   % range of noise levels 
+EbNo = 15:2:25;                   % range of noise levels 
 NumPackets = 50;                 % number of packets sent
 PacketSizeBits = 8192;           % 802.11 packet size
 SamplesPerChip = 8;       
@@ -38,8 +38,8 @@ end
 %% Setup
 modulateFunctions = {@(x) barkermod(x, 1), @(x) barkermod(x, 2),...
     @(x) cckmod(x, 4), @(x) cckmod(x, 8)};
-demodulateFunctions = {@(x) barkerdemod(x, 1), @(x) barkerdemod(x, 2),...
-    @(x) CCKdemod(x, 4), @(x) CCKdemod(x, 8)};
+demodulateFunctions = {@(x,y) barkerdemod(x, 1), @(x,y) barkerdemod(x, 2),...
+    @(x,y) CCKdemod(x, 4, y), @(x,y) CCKdemod(x, 8, y)};
 BitsPerSymbols = [1, 2, 4, 8];
 SpreadingRates = [11, 11, 8, 8];
 calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
@@ -67,7 +67,7 @@ for i=1:length(EbNo)
         [RxChips,TotalDelayInBits] = RxFilter(ChannelOutput,h,...
                                   SamplesPerChip,FilterDelayInChips,...
                                 BitsPerSymbols(rate),SpreadingRates(rate));
-        RxBits = demodulateFunctions{rate}(RxChips);
+        RxBits = demodulateFunctions{rate}(RxChips, TotalDelayInBits);
         
         %Calculate error 
         TotalBits = TotalBits+length(RxBits)-TotalDelayInBits;
