@@ -1,4 +1,4 @@
-function RxBits = CCKdemod( RxSymbStream,bitspersymbol )
+function RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
 % function RxBits = CCKdemod( RxSymbMat )
 %
 % This function takes the output in the form of cckmod's output - a matrix
@@ -15,6 +15,14 @@ function RxBits = CCKdemod( RxSymbStream,bitspersymbol )
 
 %default bitspersymbol=8
 if nargin<2, bitspersymbol=8; end
+
+if mod(TotalDelayInBits, bitspersymbol*2)
+    norm = 1;
+elseif mod(TotalDelayInBits, bitspersymbol)
+    norm = 0;
+else
+    disp('confused');
+end
 
 RxSymbMat = reshape(RxSymbStream, 8, []).';
 % Find possibilities for the last 6 bits for later comparison
@@ -47,9 +55,9 @@ for ii=1:size(RxSymbMat, 1)
     
     % find the differntial phi1, if odd symbol then extra pi shift
     if (mod(ii-1,2))
-        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*exp(-pi*j);
+        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*(norm*exp(-pi*j));
     else
-        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1);
+        adjusted = RxSymbMat(ii, 8)*conj(prev_phi1)*(~norm*exp(-pi*j));
     end
     
     %find the phi1 offset and choose relevant
