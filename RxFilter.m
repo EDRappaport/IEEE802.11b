@@ -29,7 +29,7 @@ chips = samples(1:SamplesPerChip:end);
 if mod(FilterDelayInChips,SpreadingRate) % filter delay is not aligned
     AlignmentChipDelay = SpreadingRate...
                          - mod(FilterDelayInChips,SpreadingRate);
-else
+else                                     % filter delay is aligned
     AlignmentChipDelay = 0;
 end
 TotalDelayInChips = FilterDelayInChips + AlignmentChipDelay;
