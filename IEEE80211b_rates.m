@@ -1,7 +1,7 @@
-% IEEE80211b_script.m
+% IEEE80211b_rates.m
 %
-% Implements IEEE802.11b either at a fixed data rate
-% or employing ARF.
+% Simulates IEEE802.11b at each of the different data rates and plots
+% the resulting BER curves.
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b
