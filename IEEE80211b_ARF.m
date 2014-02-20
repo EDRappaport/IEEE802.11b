@@ -1,6 +1,7 @@
 % IEEE80211b_ARF.m
 %
-% This script implements IEEE802.11b using ARF and a changing EbNo.
+% This script simulates IEEE802.11b using ARF in the presence of 
+% a changing EbNo.
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b
