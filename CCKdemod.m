@@ -1,10 +1,15 @@
 function RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
 % function RxBits = CCKdemod( RxSymbMat )
 %
-% This function takes the output in the form of cckmod's output - a matrix
-% where each row is one symbol, 8 chips long, representing 8 (11Mbps)
-% or 4 (5.5Mbps).  The function will demodulate the input and output a
-% vector of the predicted bits.
+% This function takes the output in the form of cckmod's output - a vector
+% of CCK modulated data.  bitspersymbol will determine whether is
+% demodulated assuming 8 bits or 4 bits per symbol.  TotalDelayInBits will
+% tell the function how many bits are disposed of as a result of filtering;
+% this will affect the alternating /pi phase shift.  The function will
+% output a vector of the predicted bits.
+%
+% For a datarate of 5.5Mbps use 4 bitspersymbol.
+% For a datarate of 11Mbps use 8 bitspersymbol.
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b
@@ -72,4 +77,3 @@ for ii=1:size(RxSymbMat, 1)
 end
 
 RxBits = reshape(de2bi(k, bitspersymbol, 'left-msb').', 1, []).';
-%RxBits = k;

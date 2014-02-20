@@ -6,8 +6,8 @@ function [ chips ] = barkermod( data,bitspersymbol )
 % the corresponding stream of chips which will be a vector of length 
 % data/BitsPerSymbol*SpreadingRate.
 %
-% For a datarate of 1Mbps use 1 bitpersymbol (DBPSK).
-% For a datarate of 2Mbps use 2 bitpersymbol (DQPSK).
+% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).
+% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b

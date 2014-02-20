@@ -2,9 +2,11 @@ function [ symbols ] = cckmod( data,bitspersymbol )
 % function [ symbols ] = cckmod( data,bitspersymbol )
 %
 % This function takes in a bitstream (data) and a bitspersymbol and
-% complementary code keying modulates  the data. symbols will be a matrix
-% of symbols where each row  is a length 8 complex vector corresponding to 
-% a single symbol
+% complementary code keying modulates  the data. The function will output
+% symbols which will be a vector of the modulated data.
+%
+% For a datarate of 5.5Mbps use 4 bitspersymbol.
+% For a datarate of 11Mbps use 8 bitspersymbol.
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b
