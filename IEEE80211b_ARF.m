@@ -101,16 +101,16 @@ totalTime = sum(RateMat==1)*PacketSizeBits/1e6 +...
     sum(RateMat==2)*PacketSizeBits/2e6 +...
     sum(RateMat==3)*PacketSizeBits/5.5e6 +...
     sum(RateMat==4)*PacketSizeBits/11e6;
-finalGoodput = PacketSizeBits*numTotalSuccess/totalTime;
-finalThroughput = NumPackets*PacketSizeBits/totalTime;
+finalGoodput = PacketSizeBits*numTotalSuccess/totalTime/1e6; %in Mbps
+finalThroughput = NumPackets*PacketSizeBits/totalTime/1e6;   %in Mbps
 %% Plot ARF transitions
 h = figure('Name','ARF Transitions'); hold on;
 subplot(211); plot(1:NumPackets,RateMat);
 xlabel('Packet Number'); ylabel('Data Rate');
 xlim([1 NumPackets]); ylim([0 5]);
 title({'ARF Transitions', ['final BER = ' num2str(finalBER)...
-       '; final Throughput = ' num2str(finalThroughput) 'b/s',...
-       '; final Goodput = ' num2str(finalGoodput) 'b/s']});
+       ';   final Throughput = ' num2str(finalThroughput) 'Mbps',...
+       ';   final Goodput = ' num2str(finalGoodput) 'Mbps']});
 set(gca,'yTickLabel',{'', '1Mbps','2Mbps','5.5Mbps','11Mbps', ''});
 
 subplot(212); plot(1:NumPackets, EbNo);
