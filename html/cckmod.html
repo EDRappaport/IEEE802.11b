@@ -69,9 +69,11 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">% function [ symbols ] = cckmod( data,bitspersymbol )</span>
 <span class="comment">%</span>
 <span class="comment">% This function takes in a bitstream (data) and a bitspersymbol and</span>
-<span class="comment">% complementary code keying modulates  the data. symbols will be a matrix</span>
-<span class="comment">% of symbols where each row  is a length 8 complex vector corresponding to</span>
-<span class="comment">% a single symbol</span>
+<span class="comment">% complementary code keying modulates  the data. The function will output</span>
+<span class="comment">% symbols which will be a vector of the modulated data.</span>
+<span class="comment">%</span>
+<span class="comment">% For a datarate of 5.5Mbps use 4 bitspersymbol.</span>
+<span class="comment">% For a datarate of 11Mbps use 8 bitspersymbol.</span>
 <span class="comment">%</span>
 <span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
@@ -162,9 +164,11 @@ function [ symbols ] = cckmod( data,bitspersymbol )
 % function [ symbols ] = cckmod( data,bitspersymbol )
 %
 % This function takes in a bitstream (data) and a bitspersymbol and
-% complementary code keying modulates  the data. symbols will be a matrix
-% of symbols where each row  is a length 8 complex vector corresponding to 
-% a single symbol
+% complementary code keying modulates  the data. The function will output
+% symbols which will be a vector of the modulated data.
+%
+% For a datarate of 5.5Mbps use 4 bitspersymbol.
+% For a datarate of 11Mbps use 8 bitspersymbol.
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b

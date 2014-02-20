@@ -65,27 +65,32 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 
 
 
-  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Simulation Parameters</a></li><li><a href="#3">ARF Parameters</a></li><li><a href="#4">Setup</a></li><li><a href="#5">Main Loop</a></li><li><a href="#6">Plot ARF transitions</a></li></ul><h2>Called Functions</h2><ul><li><a href="#CCKdemod">CCKdemod </a></li><li><a href="#RxFilter">RxFilter </a></li><li><a href="#TxFilter">TxFilter </a></li><li><a href="#barkerdemod">barkerdemod </a></li><li><a href="#barkermod">barkermod </a></li><li><a href="#cckmod">cckmod </a></li></ul></div><pre class="codeinput"><span class="comment">% ECE408: Wireless Communications</span>
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Simulation Parameters</a></li><li><a href="#3">ARF Parameters</a></li><li><a href="#4">Setup</a></li><li><a href="#5">Main Loop</a></li><li><a href="#6">Plot ARF transitions</a></li></ul><h2>Called Functions</h2><ul><li><a href="#CCKdemod">CCKdemod </a></li><li><a href="#RxFilter">RxFilter </a></li><li><a href="#TxFilter">TxFilter </a></li><li><a href="#barkerdemod">barkerdemod </a></li><li><a href="#barkermod">barkermod </a></li><li><a href="#cckmod">cckmod </a></li></ul></div><pre class="codeinput"><span class="comment">% IEEE80211b_ARF.m</span>
+<span class="comment">%</span>
+<span class="comment">% This script implements IEEE802.11b using ARF and a changing EbNo.</span>
+<span class="comment">%</span>
+<span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
 <span class="comment">%</span>
 <span class="comment">% Rappaport, Elliot D</span>
 <span class="comment">% Weintraub, Elie</span>
 <span class="comment">% Weintraub, Hillel</span>
-<span class="comment">%</span>
-<span class="comment">% IEEE80211b_ARF.m: Implements IEEE802.11b using ARF and a changing EbNo.</span>
 clear <span class="string">all</span>,close <span class="string">all</span>;
-
-tic
-</pre><h2>Simulation Parameters<a name="2"></a></h2><p>make some fun EbNo's to simulate chnaging environment and see how ARF adjusts</p><pre class="codeinput">EbNo1 = 15*(1+sin([1:100]/10)) + 3*randn(1, 100);<span class="comment">% range of noise levels</span>
+</pre><h2>Simulation Parameters<a name="2"></a></h2><pre class="codeinput"><span class="comment">% make some fun EbNo's to simulate changing environment and see how ARF</span>
+<span class="comment">% adjusts the bit rate</span>
+EbNo1 = 15*(1+sin([1:100]/10)) + 3*randn(1, 100);
 EbNo2 = 15*(1+sin([1:50]/2)) + 2*randn(1, 50);
 EbNo3 = 20*randn(1, 50);
 EbNo4 = abs(15*(1+sin([1:50]/10)).*(1+sin([1:50]/3)));
+
 EbNo = [EbNo1 EbNo2 EbNo3 EbNo4];
-NumPackets = length(EbNo);                 <span class="comment">% number of packets sent</span>
-PacketSizeBits = 8192;           <span class="comment">% 802.11 packet size</span>
+
+<span class="comment">% Constants:</span>
+NumPackets = length(EbNo);      <span class="comment">% number of packets sent</span>
+PacketSizeBits = 8192;          <span class="comment">% 802.11 packet size</span>
 SamplesPerChip = 8;
-</pre><h2>ARF Parameters<a name="3"></a></h2><pre class="codeinput">ERR_THRESH = PacketSizeBits/500; <span class="comment">% num errors above which packet is bad</span>
-SUCCESS_THRESH = 10;              <span class="comment">% num of good pkts needed to transition</span>
+</pre><h2>ARF Parameters<a name="3"></a></h2><pre class="codeinput">ERR_THRESH = PacketSizeBits/500;    <span class="comment">% num errors above which packet is considered failed</span>
+SUCCESS_THRESH = 10;                <span class="comment">% num of good pkts needed to transition up</span>
 RateMat=zeros(NumPackets,1);
 </pre><h2>Setup<a name="4"></a></h2><pre class="codeinput">modulateFunctions = {@(x) barkermod(x, 1), @(x) barkermod(x, 2),<span class="keyword">...</span>
     @(x) cckmod(x, 4), @(x) cckmod(x, 8)};
@@ -99,10 +104,9 @@ calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))<span class="keyword"
 </pre><h2>Main Loop<a name="5"></a></h2><pre class="codeinput"><span class="comment">%Initialize Stats</span>
 rate = 1;  TotalBits = 0; ErrorBits = 0;
 numSuccess = 0; numFail = 0; probe = false;
+numTotalSuccess = 0;
 
 <span class="keyword">for</span> packet = 1:NumPackets
-
-    <span class="comment">%disp(['Simulating Packet ' num2str(packet) '...']);</span>
 
     snr = calcSnr(rate,EbNo(packet));   <span class="comment">%EbNo always changing</span>
 
@@ -134,7 +138,7 @@ numSuccess = 0; numFail = 0; probe = false;
             rate = rate-1; numSuccess = 0; numFail = 0;probe = false;
         <span class="keyword">end</span>
     <span class="keyword">else</span>                          <span class="comment">% success</span>
-        numSuccess = numSuccess+1;
+        numSuccess = numSuccess+1; numTotalSuccess = numTotalSuccess+1;
         <span class="keyword">if</span> numSuccess == SUCCESS_THRESH &amp;&amp; rate &lt; 4
             rate = rate+1; numSuccess = 0; numFail = 0; probe = true;
         <span class="keyword">else</span>
@@ -143,48 +147,59 @@ numSuccess = 0; numFail = 0; probe = false;
     <span class="keyword">end</span>
 
 <span class="keyword">end</span>
+
+<span class="comment">% Stat Calculations:</span>
+finalBER = ErrorBits/TotalBits;
+totalTime = sum(RateMat==1)*PacketSizeBits/1e6 +<span class="keyword">...</span>
+    sum(RateMat==2)*PacketSizeBits/2e6 +<span class="keyword">...</span>
+    sum(RateMat==3)*PacketSizeBits/5.5e6 +<span class="keyword">...</span>
+    sum(RateMat==4)*PacketSizeBits/11e6;
+finalThroughput = PacketSizeBits*numTotalSuccess/totalTime;
 </pre><h2>Plot ARF transitions<a name="6"></a></h2><pre class="codeinput">h = figure(<span class="string">'Name'</span>,<span class="string">'ARF Transitions'</span>); hold <span class="string">on</span>;
 subplot(211); plot(1:NumPackets,RateMat);
-xlabel(<span class="string">'Packet Number'</span>);ylabel(<span class="string">'Data Rate'</span>);
-xlim([1 NumPackets]);ylim([0 5]);title(<span class="string">'ARF Transitions'</span>);
+xlabel(<span class="string">'Packet Number'</span>); ylabel(<span class="string">'Data Rate'</span>);
+xlim([1 NumPackets]); ylim([0 5]);
+title([<span class="string">'ARF Transitions: final BER = '</span> num2str(finalBER)<span class="keyword">...</span>
+    <span class="string">'; final Throughput = '</span> num2str(finalThroughput) <span class="string">'b/s'</span>]);
 set(gca,<span class="string">'yTickLabel'</span>,{<span class="string">''</span>, <span class="string">'1Mbps'</span>,<span class="string">'2Mbps'</span>,<span class="string">'5.5Mbps'</span>,<span class="string">'11Mbps'</span>, <span class="string">''</span>});
 
 subplot(212); plot(1:NumPackets, EbNo);
-xlabel(<span class="string">'Packet Number'</span>);ylabel(<span class="string">'EbNo'</span>);
-
-<span class="comment">% saveas(h, 'Transitions.fig');</span>
-<span class="comment">% saveas(h, 'Transitions.png');</span>
-
-toc
-</pre><pre class="codeoutput">Elapsed time is 886.554516 seconds.
+xlabel(<span class="string">'Packet Number'</span>); ylabel(<span class="string">'EbNo'</span>);
+title(<span class="string">'EbNo'</span>);
 </pre><img vspace="5" hspace="5" src="IEEE80211b_ARF_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
+% IEEE80211b_ARF.m
+%
+% This script implements IEEE802.11b using ARF and a changing EbNo.
+%
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b
 %
 % Rappaport, Elliot D
 % Weintraub, Elie
 % Weintraub, Hillel
-%
-% IEEE80211b_ARF.m: Implements IEEE802.11b using ARF and a changing EbNo.
 clear all,close all;
 
-tic
+
 %% Simulation Parameters
-% make some fun EbNo's to simulate chnaging environment and see how ARF
-% adjusts
-EbNo1 = 15*(1+sin([1:100]/10)) + 3*randn(1, 100);% range of noise levels 
+
+% make some fun EbNo's to simulate changing environment and see how ARF
+% adjusts the bit rate
+EbNo1 = 15*(1+sin([1:100]/10)) + 3*randn(1, 100);
 EbNo2 = 15*(1+sin([1:50]/2)) + 2*randn(1, 50);
 EbNo3 = 20*randn(1, 50);
 EbNo4 = abs(15*(1+sin([1:50]/10)).*(1+sin([1:50]/3)));
+
 EbNo = [EbNo1 EbNo2 EbNo3 EbNo4];
-NumPackets = length(EbNo);                 % number of packets sent
-PacketSizeBits = 8192;           % 802.11 packet size
+
+% Constants:
+NumPackets = length(EbNo);      % number of packets sent
+PacketSizeBits = 8192;          % 802.11 packet size
 SamplesPerChip = 8;       
 
 %% ARF Parameters
-ERR_THRESH = PacketSizeBits/500; % num errors above which packet is bad
-SUCCESS_THRESH = 10;              % num of good pkts needed to transition
+ERR_THRESH = PacketSizeBits/500;    % num errors above which packet is considered failed
+SUCCESS_THRESH = 10;                % num of good pkts needed to transition up
 RateMat=zeros(NumPackets,1);
 
 %% Setup
@@ -197,16 +212,16 @@ SpreadingRates = [11, 11, 8, 8];
 DataRates = [1, 2, 5.5, 11];
 calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))...
                             -10*log10(SpreadingRates(rate)*SamplesPerChip);
+
                         
 %% Main Loop
 
 %Initialize Stats
 rate = 1;  TotalBits = 0; ErrorBits = 0;
-numSuccess = 0; numFail = 0; probe = false; 
+numSuccess = 0; numFail = 0; probe = false;
+numTotalSuccess = 0;
 
 for packet = 1:NumPackets
-
-    %disp(['Simulating Packet ' num2str(packet) '...']);
 
     snr = calcSnr(rate,EbNo(packet));   %EbNo always changing
 
@@ -238,7 +253,7 @@ for packet = 1:NumPackets
             rate = rate-1; numSuccess = 0; numFail = 0;probe = false;
         end
     else                          % success
-        numSuccess = numSuccess+1;
+        numSuccess = numSuccess+1; numTotalSuccess = numTotalSuccess+1;
         if numSuccess == SUCCESS_THRESH && rate < 4
             rate = rate+1; numSuccess = 0; numFail = 0; probe = true;
         else
@@ -248,20 +263,26 @@ for packet = 1:NumPackets
 
 end
 
+% Stat Calculations:
+finalBER = ErrorBits/TotalBits;
+totalTime = sum(RateMat==1)*PacketSizeBits/1e6 +...
+    sum(RateMat==2)*PacketSizeBits/2e6 +...
+    sum(RateMat==3)*PacketSizeBits/5.5e6 +...
+    sum(RateMat==4)*PacketSizeBits/11e6;
+finalThroughput = PacketSizeBits*numTotalSuccess/totalTime;
+
 %% Plot ARF transitions
 h = figure('Name','ARF Transitions'); hold on;
 subplot(211); plot(1:NumPackets,RateMat);
-xlabel('Packet Number');ylabel('Data Rate');
-xlim([1 NumPackets]);ylim([0 5]);title('ARF Transitions');   
+xlabel('Packet Number'); ylabel('Data Rate');
+xlim([1 NumPackets]); ylim([0 5]);
+title(['ARF Transitions: final BER = ' num2str(finalBER)...
+    '; final Throughput = ' num2str(finalThroughput) 'b/s']);
 set(gca,'yTickLabel',{'', '1Mbps','2Mbps','5.5Mbps','11Mbps', ''});
 
 subplot(212); plot(1:NumPackets, EbNo);
-xlabel('Packet Number');ylabel('EbNo');
-
-% saveas(h, 'Transitions.fig');
-% saveas(h, 'Transitions.png');
-
-toc
+xlabel('Packet Number'); ylabel('EbNo');
+title('EbNo');
 
 ##### SOURCE END #####
 --></body></html>
@@ -336,10 +357,15 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
   </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
 <span class="comment">% function RxBits = CCKdemod( RxSymbMat )</span>
 <span class="comment">%</span>
-<span class="comment">% This function takes the output in the form of cckmod's output - a matrix</span>
-<span class="comment">% where each row is one symbol, 8 chips long, representing 8 (11Mbps)</span>
-<span class="comment">% or 4 (5.5Mbps).  The function will demodulate the input and output a</span>
-<span class="comment">% vector of the predicted bits.</span>
+<span class="comment">% This function takes the output in the form of cckmod's output - a vector</span>
+<span class="comment">% of CCK modulated data.  bitspersymbol will determine whether is</span>
+<span class="comment">% demodulated assuming 8 bits or 4 bits per symbol.  TotalDelayInBits will</span>
+<span class="comment">% tell the function how many bits are disposed of as a result of filtering;</span>
+<span class="comment">% this will affect the alternating /pi phase shift.  The function will</span>
+<span class="comment">% output a vector of the predicted bits.</span>
+<span class="comment">%</span>
+<span class="comment">% For a datarate of 5.5Mbps use 4 bitspersymbol.</span>
+<span class="comment">% For a datarate of 11Mbps use 8 bitspersymbol.</span>
 <span class="comment">%</span>
 <span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
@@ -407,7 +433,6 @@ k=zeros(size(RxSymbMat,1),1);
 <span class="keyword">end</span>
 
 RxBits = reshape(de2bi(k, bitspersymbol, <span class="string">'left-msb'</span>).', 1, []).';
-<span class="comment">%RxBits = k;</span>
 </pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2013a</a><br></p></div><!--
 \n
 --></body></html>
@@ -711,8 +736,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">% the corresponding stream of bits which will be a vector of length</span>
 <span class="comment">% chips*BitsPerSymbol/SpreadingRate.</span>
 <span class="comment">%</span>
-<span class="comment">% For a datarate of 1Mbps use 1 bitpersymbol (DBPSK).</span>
-<span class="comment">% For a datarate of 2Mbps use 2 bitpersymbol (DQPSK).</span>
+<span class="comment">% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).</span>
+<span class="comment">% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).</span>
 <span class="comment">%</span>
 <span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
@@ -821,8 +846,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">% the corresponding stream of chips which will be a vector of length</span>
 <span class="comment">% data/BitsPerSymbol*SpreadingRate.</span>
 <span class="comment">%</span>
-<span class="comment">% For a datarate of 1Mbps use 1 bitpersymbol (DBPSK).</span>
-<span class="comment">% For a datarate of 2Mbps use 2 bitpersymbol (DQPSK).</span>
+<span class="comment">% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).</span>
+<span class="comment">% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).</span>
 <span class="comment">%</span>
 <span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
@@ -925,9 +950,11 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">% function [ symbols ] = cckmod( data,bitspersymbol )</span>
 <span class="comment">%</span>
 <span class="comment">% This function takes in a bitstream (data) and a bitspersymbol and</span>
-<span class="comment">% complementary code keying modulates  the data. symbols will be a matrix</span>
-<span class="comment">% of symbols where each row  is a length 8 complex vector corresponding to</span>
-<span class="comment">% a single symbol</span>
+<span class="comment">% complementary code keying modulates  the data. The function will output</span>
+<span class="comment">% symbols which will be a vector of the modulated data.</span>
+<span class="comment">%</span>
+<span class="comment">% For a datarate of 5.5Mbps use 4 bitspersymbol.</span>
+<span class="comment">% For a datarate of 11Mbps use 8 bitspersymbol.</span>
 <span class="comment">%</span>
 <span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>

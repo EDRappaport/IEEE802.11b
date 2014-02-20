@@ -15,12 +15,13 @@ clear all,close all;
 
 % make some fun EbNo's to simulate changing environment and see how ARF
 % adjusts the bit rate
-EbNo1 = 15*(1+sin([1:100]/10)) + 3*randn(1, 100);
-EbNo2 = 15*(1+sin([1:50]/2)) + 2*randn(1, 50);
-EbNo3 = 20*randn(1, 50);
-EbNo4 = abs(15*(1+sin([1:50]/10)).*(1+sin([1:50]/3)));
+EbNo1 = 15*(1+sin([1:150]/10));
+EbNo2 = 15*(1+sin([1:50]/10)) + 3*randn(1, 50);
+EbNo3 = 15*(1+sin([1:50]/2)) + 3*randn(1, 50);
+EbNo4 = abs(20*randn(1, 50));
+EbNo5 = abs(15*(1+sin([1:50]/10)).*(1+sin([1:50]/3)));
 
-EbNo = [EbNo1 EbNo2 EbNo3 EbNo4];
+EbNo = [EbNo1 EbNo2 EbNo3 EbNo4 EbNo5];
 
 % Constants:
 NumPackets = length(EbNo);      % number of packets sent

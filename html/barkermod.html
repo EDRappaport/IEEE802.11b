@@ -73,8 +73,8 @@ table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px soli
 <span class="comment">% the corresponding stream of chips which will be a vector of length</span>
 <span class="comment">% data/BitsPerSymbol*SpreadingRate.</span>
 <span class="comment">%</span>
-<span class="comment">% For a datarate of 1Mbps use 1 bitpersymbol (DBPSK).</span>
-<span class="comment">% For a datarate of 2Mbps use 2 bitpersymbol (DQPSK).</span>
+<span class="comment">% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).</span>
+<span class="comment">% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).</span>
 <span class="comment">%</span>
 <span class="comment">% ECE408: Wireless Communications</span>
 <span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
@@ -112,8 +112,8 @@ function [ chips ] = barkermod( data,bitspersymbol )
 % the corresponding stream of chips which will be a vector of length 
 % data/BitsPerSymbol*SpreadingRate.
 %
-% For a datarate of 1Mbps use 1 bitpersymbol (DBPSK).
-% For a datarate of 2Mbps use 2 bitpersymbol (DQPSK).
+% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).
+% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).
 %
 % ECE408: Wireless Communications
 % Implementation of PHY layer of IEEE802.11b
