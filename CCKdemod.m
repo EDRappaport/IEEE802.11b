@@ -1,11 +1,11 @@
 function RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
-% function RxBits = CCKdemod( RxSymbMat )
+% function RxBits = CCKdemod( RxSymbStream,bitspersymbol,TotalDelayInBits )
 %
 % This function takes the output in the form of cckmod's output - a vector
 % of CCK modulated data.  bitspersymbol will determine whether is
 % demodulated assuming 8 bits or 4 bits per symbol.  TotalDelayInBits will
 % tell the function how many bits are disposed of as a result of filtering;
-% this will affect the alternating /pi phase shift.  The function will
+% this will affect the alternating pi phase shift.  The function will
 % output a vector of the predicted bits.
 %
 % For a datarate of 5.5Mbps use 4 bitspersymbol.
