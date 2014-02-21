@@ -1,0 +1,147 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>barkerdemod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="barkerdemod.m"><style type="text/css">
+
+body {
+  background-color: white;
+  margin:10px;
+}
+
+h1 {
+  color: #990000; 
+  font-size: x-large;
+}
+
+h2 {
+  color: #990000;
+  font-size: medium;
+}
+
+/* Make the text shrink to fit narrow windows, but not stretch too far in 
+wide windows. */ 
+p,h1,h2,div.content div {
+  max-width: 600px;
+  /* Hack for IE6 */
+  width: auto !important; width: 600px;
+}
+
+pre.codeinput {
+  background: #EEEEEE;
+  padding: 10px;
+}
+@media print {
+  pre.codeinput {word-wrap:break-word; width:100%;}
+} 
+
+span.keyword {color: #0000FF}
+span.comment {color: #228B22}
+span.string {color: #A020F0}
+span.untermstring {color: #B20000}
+span.syscmd {color: #B28C00}
+
+pre.codeoutput {
+  color: #666666;
+  padding: 10px;
+}
+
+pre.error {
+  color: red;
+}
+
+p.footer {
+  text-align: right;
+  font-size: xx-small;
+  font-weight: lighter;
+  font-style: italic;
+  color: gray;
+}
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="keyword">function</span> [ data ] = barkerdemod( chips,bitspersymbol )
+<span class="comment">% function [ data ] = barkerdemod( chips,bitspersymbol )</span>
+<span class="comment">%</span>
+<span class="comment">% This function takes in a chipstream (chips) and a bitspersymbol and</span>
+<span class="comment">% DPSK demodulates, first desreading with a Barker code. The output is</span>
+<span class="comment">% the corresponding stream of bits which will be a vector of length</span>
+<span class="comment">% chips*BitsPerSymbol/SpreadingRate.</span>
+<span class="comment">%</span>
+<span class="comment">% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).</span>
+<span class="comment">% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).</span>
+<span class="comment">%</span>
+<span class="comment">% ECE408: Wireless Communications</span>
+<span class="comment">% Implementation of PHY layer of IEEE802.11b</span>
+<span class="comment">%</span>
+<span class="comment">% Rappaport, Elliot D</span>
+<span class="comment">% Weintraub, Elie</span>
+<span class="comment">% Weintraub, Hillel</span>
+
+<span class="comment">%default bitspersymbol=1</span>
+<span class="keyword">if</span> nargin&lt;2, bitspersymbol=1; <span class="keyword">end</span>
+
+<span class="comment">%Spreading Sequence</span>
+Barker = [1 -1  1  1 -1  1  1  1 -1 -1 -1];   <span class="comment">% Barker Spreading Sequence</span>
+SpreadingRate = 11;                           <span class="comment">% Chips per symbol</span>
+
+<span class="comment">%Define Deodulator Object</span>
+<span class="keyword">switch</span> bitspersymbol
+    <span class="keyword">case</span> 1    <span class="comment">% 1 Mbps data rate (DBPSK Modulation)</span>
+        DPSK_Demod = comm.DBPSKDemodulator;
+    <span class="keyword">case</span> 2    <span class="comment">% 2 Mbps data rate (DQPSK Modulation)</span>
+        DPSK_Demod = comm.DQPSKDemodulator(0,<span class="string">'BitOutput'</span>,true,<span class="string">'SymbolMapping'</span>,<span class="string">'Binary'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">%Despread by multiplying by Barker sequence</span>
+chips = reshape(chips,SpreadingRate,[]);
+symbols = reshape(Barker*chips,[],1)/SpreadingRate;
+
+<span class="comment">%Demodulate Data</span>
+data = step(DPSK_Demod,symbols);
+</pre><p class="footer"><br>
+      Published with MATLAB&reg; 7.13<br></p></div><!--
+##### SOURCE BEGIN #####
+function [ data ] = barkerdemod( chips,bitspersymbol )
+% function [ data ] = barkerdemod( chips,bitspersymbol )
+%
+% This function takes in a chipstream (chips) and a bitspersymbol and
+% DPSK demodulates, first desreading with a Barker code. The output is 
+% the corresponding stream of bits which will be a vector of length 
+% chips*BitsPerSymbol/SpreadingRate.
+%
+% For a datarate of 1Mbps use 1 bitspersymbol (DBPSK).
+% For a datarate of 2Mbps use 2 bitspersymbol (DQPSK).
+%
+% ECE408: Wireless Communications
+% Implementation of PHY layer of IEEE802.11b
+%
+% Rappaport, Elliot D
+% Weintraub, Elie
+% Weintraub, Hillel
+
+%default bitspersymbol=1
+if nargin<2, bitspersymbol=1; end
+
+%Spreading Sequence
+Barker = [1 -1  1  1 -1  1  1  1 -1 -1 -1];   % Barker Spreading Sequence
+SpreadingRate = 11;                           % Chips per symbol
+
+%Define Deodulator Object 
+switch bitspersymbol
+    case 1    % 1 Mbps data rate (DBPSK Modulation)
+        DPSK_Demod = comm.DBPSKDemodulator;   
+    case 2    % 2 Mbps data rate (DQPSK Modulation)
+        DPSK_Demod = comm.DQPSKDemodulator(0,'BitOutput',true,'SymbolMapping','Binary');    
+end
+
+%Despread by multiplying by Barker sequence
+chips = reshape(chips,SpreadingRate,[]);
+symbols = reshape(Barker*chips,[],1)/SpreadingRate;
+
+%Demodulate Data
+data = step(DPSK_Demod,symbols);
+##### SOURCE END #####
+--></body></html>
