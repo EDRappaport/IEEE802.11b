@@ -63,8 +63,8 @@ end
 figure('Name','BER vs. EbNo');
 for rate=1:4
     subplot(2,2,rate);semilogy(EbNo,BER(:,rate),'*-');grid on; 
-    title_str = ['BER for IEEE 802.11b ' num2str(DataRates(rate))...
-                 'Mbps through an AWGN Channel']; 
+    title_str = {['BER for IEEE 802.11b ' num2str(DataRates(rate))...
+                 'Mbps'] 'through an AWGN Channel'}; 
     title(title_str); xlabel('Eb/No (dB)'); ylabel('Bit Error Rate');
 end
 

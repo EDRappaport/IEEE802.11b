@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>IEEE80211b_rates</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="IEEE80211b_rates.m"><style type="text/css">
+      --><title>IEEE80211b_rates</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="IEEE80211b_rates.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -119,8 +119,8 @@ calcSnr = @(rate,EbNo) EbNo +10*log10(BitsPerSymbols(rate))<span class="keyword"
 </pre><h2>Plot BER Results<a name="5"></a></h2><pre class="codeinput">figure(<span class="string">'Name'</span>,<span class="string">'BER vs. EbNo'</span>);
 <span class="keyword">for</span> rate=1:4
     subplot(2,2,rate);semilogy(EbNo,BER(:,rate),<span class="string">'*-'</span>);grid <span class="string">on</span>;
-    title_str = [<span class="string">'BER for IEEE 802.11b '</span> num2str(DataRates(rate))<span class="keyword">...</span>
-                 <span class="string">'Mbps through an AWGN Channel'</span>];
+    title_str = {[<span class="string">'BER for IEEE 802.11b '</span> num2str(DataRates(rate))<span class="keyword">...</span>
+                 <span class="string">'Mbps'</span>] <span class="string">'through an AWGN Channel'</span>};
     title(title_str); xlabel(<span class="string">'Eb/No (dB)'</span>); ylabel(<span class="string">'Bit Error Rate'</span>);
 <span class="keyword">end</span>
 </pre><img vspace="5" hspace="5" src="IEEE80211b_rates_01.png" alt=""> <p class="footer"><br>
@@ -191,8 +191,8 @@ end
 figure('Name','BER vs. EbNo');
 for rate=1:4
     subplot(2,2,rate);semilogy(EbNo,BER(:,rate),'*-');grid on; 
-    title_str = ['BER for IEEE 802.11b ' num2str(DataRates(rate))...
-                 'Mbps through an AWGN Channel']; 
+    title_str = {['BER for IEEE 802.11b ' num2str(DataRates(rate))...
+                 'Mbps'] 'through an AWGN Channel'}; 
     title(title_str); xlabel('Eb/No (dB)'); ylabel('Bit Error Rate');
 end
 
@@ -208,7 +208,7 @@ end
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>CCKdemod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="CCKdemod.m"><style type="text/css">
+      --><title>CCKdemod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="CCKdemod.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -356,7 +356,7 @@ RxBits = reshape(de2bi(k, bitspersymbol, <span class="string">'left-msb'</span>)
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>RxFilter</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="RxFilter.m"><style type="text/css">
+      --><title>RxFilter</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="RxFilter.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -465,7 +465,7 @@ chips=[zeros(AlignmentChipDelay,1);chips(1:end-AlignmentChipDelay)];
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>TxFilter</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="TxFilter.m"><style type="text/css">
+      --><title>TxFilter</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="TxFilter.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -576,7 +576,7 @@ FilterDelayInChips = FilterDelayInSamples/SamplesPerChip;
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>barkerdemod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="barkerdemod.m"><style type="text/css">
+      --><title>barkerdemod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="barkerdemod.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -684,7 +684,7 @@ data = step(DPSK_Demod,symbols);
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>barkermod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="barkermod.m"><style type="text/css">
+      --><title>barkermod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="barkermod.m"><style type="text/css">
 
 body {
   background-color: white;
@@ -790,7 +790,7 @@ chips = reshape(Barker*symbols.',[],1);
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>cckmod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-20"><meta name="DC.source" content="cckmod.m"><style type="text/css">
+      --><title>cckmod</title><meta name="generator" content="MATLAB 7.13"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-02-21"><meta name="DC.source" content="cckmod.m"><style type="text/css">
 
 body {
   background-color: white;
